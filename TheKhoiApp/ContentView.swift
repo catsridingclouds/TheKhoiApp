@@ -60,15 +60,15 @@ extension Color {
 }
 
 struct KHOITheme {
-    static let largeTitle = Font.system(size: 34, weight: .bold, design: .default)
-    static let title = Font.system(size: 28, weight: .semibold, design: .default)
-    static let title2 = Font.system(size: 22, weight: .semibold, design: .default)
-    static let headline = Font.system(size: 17, weight: .semibold, design: .default)
-    static let body = Font.system(size: 15, weight: .regular, design: .default)
-    static let callout = Font.system(size: 14, weight: .regular, design: .default)
-    static let caption = Font.system(size: 12, weight: .regular, design: .default)
-    static let caption2 = Font.system(size: 11, weight: .medium, design: .default)
-    
+    static let largeTitle = Font.custom("Switzer-Regular", size: 96)
+    static let title = Font.custom("Switzer-Regular", size: 28)
+    static let title2 = Font.custom("Switzer-Regular", size: 24)
+    static let headline = Font.custom("Switzer-Regular", size: 18)
+    static let body = Font.custom("Switzer-Regular", size: 16)
+    static let callout = Font.custom("Switzer-Regular", size: 14)
+    static let caption = Font.custom("Switzer-Regular", size: 12)
+    static let caption2 = Font.custom("Switzer-Regular", size: 10)
+
     static let spacing_xs: CGFloat = 4
     static let spacing_sm: CGFloat = 8
     static let spacing_md: CGFloat = 12
@@ -225,7 +225,10 @@ struct MasonryGrid<Content: View, T: Identifiable>: View {
     
     var body: some View {
         GeometryReader { geometry in
-            let columnWidth = (geometry.size.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
+            let horizontalPadding: CGFloat = KHOITheme.spacing_lg
+            let totalSpacing = CGFloat(columns - 1) * spacing
+            let contentWidth = geometry.size.width - (horizontalPadding * 2)
+            let columnWidth = (contentWidth - totalSpacing) / CGFloat(columns)
             
             ScrollView {
                 HStack(alignment: .top, spacing: spacing) {
@@ -237,7 +240,7 @@ struct MasonryGrid<Content: View, T: Identifiable>: View {
                         }
                     }
                 }
-                .padding(.horizontal, KHOITheme.spacing_lg)
+                .padding(.horizontal, horizontalPadding)
                 .padding(.vertical, KHOITheme.spacing_md)
             }
         }
@@ -250,19 +253,32 @@ struct MasonryGrid<Content: View, T: Identifiable>: View {
     }
 }
 
+
 // MARK: - Onboarding View
 struct OnboardingView: View {
     @Binding var isOnboardingComplete: Bool
     
     var body: some View {
         ZStack {
-            KHOIColors.white
+            Image("background")
+                .resizable()
+                .scaledToFit()
+                .offset(y: 300)
                 .ignoresSafeArea()
+                .zIndex(0)
+            
+            LinearGradient(
+                colors: [Color.white, Color.white.opacity(0)],
+                startPoint: .top,
+                endPoint: .center
+            )
+            .ignoresSafeArea()
+            .zIndex(1)
             
             VStack(spacing: 0) {
                 Spacer()
                 
-                // Logo and tagline
+                // Logo + Tagline
                 VStack(spacing: KHOITheme.spacing_md) {
                     Text("KHOI")
                         .font(KHOITheme.largeTitle)
@@ -271,14 +287,16 @@ struct OnboardingView: View {
                         .tracking(2)
                     
                     Text("where beauty finds you.")
-                        .font(KHOITheme.body)
+                        .font(KHOITheme.title2)
                         .foregroundColor(KHOIColors.mutedText)
-                        .tracking(0.5)
+                        .tracking(2)
                 }
                 .padding(.bottom, KHOITheme.spacing_xxl)
                 
                 // Auth buttons
                 VStack(spacing: KHOITheme.spacing_md) {
+                    
+                    // Apple Button
                     Button {
                         isOnboardingComplete = true
                     } label: {
@@ -295,11 +313,12 @@ struct OnboardingView: View {
                         .clipShape(RoundedRectangle(cornerRadius: KHOITheme.cornerRadius_md))
                     }
                     
+                    // Google Button
                     Button {
                         isOnboardingComplete = true
                     } label: {
                         HStack(spacing: KHOITheme.spacing_md) {
-                            Image(systemName: "globe")
+                            Image(systemName: "globe") // You can swap for Google icon if you import it
                                 .font(.title3)
                             Text("Continue with Google")
                                 .font(KHOITheme.headline)
@@ -317,8 +336,8 @@ struct OnboardingView: View {
                 }
                 .padding(.horizontal, KHOITheme.spacing_xl)
                 
-                // TOS text
-                Text("By continuing, you agree to our Terms of Service and Privacy Policy")
+                // Terms text
+                Text("By pressing on “Continue with…” you agree to our Privacy Policy and Terms and Conditions")
                     .font(KHOITheme.caption)
                     .foregroundColor(KHOIColors.mutedText)
                     .multilineTextAlignment(.center)
@@ -327,9 +346,8 @@ struct OnboardingView: View {
                     .padding(.bottom, KHOITheme.spacing_xxl)
                 
                 Spacer()
-                
-                //image
             }
+            .zIndex(2)
         }
     }
 }
@@ -378,7 +396,18 @@ struct HomeView: View {
                         .padding(.horizontal, KHOITheme.spacing_lg)
                         .padding(.vertical, KHOITheme.spacing_md)
                     }
-                    .background(KHOIColors.cream)
+                    
+                    HStack(spacing: KHOITheme.spacing_sm) {
+                        Text("DISCOVER")
+                            .font(KHOITheme.headline)
+                            .foregroundColor(KHOIColors.mutedText)
+                            .tracking(2)
+                        
+                        Image(systemName: "globe")
+                            .foregroundColor(KHOIColors.mutedText)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 12)
                     
                     // Masonry grid
                     MasonryGrid(
@@ -389,24 +418,6 @@ struct HomeView: View {
                         InspoCard(post: post, width: width) {
                             // Handle card tap
                         }
-                    }
-                }
-            }
-            .navigationTitle("KHOI")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        // Settings action
-                    } label: {
-                        Circle()
-                            .fill(KHOIColors.chipBackground)
-                            .frame(width: 32, height: 32)
-                            .overlay(
-                                Image(systemName: "person.fill")
-                                    .font(.caption)
-                                    .foregroundColor(KHOIColors.softBrown)
-                            )
                     }
                 }
             }
