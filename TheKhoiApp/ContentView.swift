@@ -110,7 +110,7 @@ struct InspoPost: Identifiable {
 
 extension InspoPost {
     static let samples: [InspoPost] = [
-        InspoPost(imageHeight: 280, artistName: "Jasmine Lee", artistHandle: "@mua_jas", tag: "Soft glam"),
+        InspoPost(imageHeight: 280, artistName: "Jasmine Li", artistHandle: "@mua_jas", tag: "Soft glam"),
         InspoPost(imageHeight: 320, artistName: "Maya Chen", artistHandle: "@mayabeauty", tag: "Bridal"),
         InspoPost(imageHeight: 240, artistName: "Sofia Martinez", artistHandle: "@sofiaglam", tag: "Full beat"),
         InspoPost(imageHeight: 300, artistName: "Aisha Williams", artistHandle: "@aisha_mua", tag: "Natural"),
